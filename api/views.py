@@ -165,35 +165,36 @@ def getAuthorPublicationsBoth(request, name):
         res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount")
         res_json = res.json()
 
+    
+        if('data' in res_json):
+            for author in res_json['data']:
 
-        for author in res_json['data']:
-
-            for aff in author['affiliations']:
-                if(("Adama Science and Technology University".strip().lower() in aff.strip().lower()) or ("Adama Science and Technology".strip().lower() in aff.strip().lower()) or ("Adama University".strip().lower() in aff.strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
-                
-                    for pub in author['papers']:
-                        
-                        title.append(pub["title"].strip().lower())
-                        
-                        one = {"name": author['name'],
-                                "title": pub["title"],
-                                "affiliation": aff,
-                                "paper_id": pub["paperId"],
-                                "year": pub["year"],
-                                "citation_count": pub["citationCount"],
-                                "abstract": pub["abstract"],
-                                "is_open_access" : pub["isOpenAccess"],
-                                "publication_date" : pub["publicationDate"],
-                                "url": pub["url"],
-                                "journal" : pub["journal"]['name'] if "name" in pub["journal"] else None,
-                                "influential_citation_count": pub["influentialCitationCount"],
-                                "publication_types" : ",".join([a for a in pub['publicationTypes']]) if pub['publicationTypes'] is not None else None,
-                                "authors" : ",".join([a['name'] for a in pub['authors']]) if "authors" in pub else None,
-                                }
-                        
-                        
-                        
-                        pubs.append(one)
+                for aff in author['affiliations']:
+                    if(("Adama Science and Technology University".strip().lower() in aff.strip().lower()) or ("Adama Science and Technology".strip().lower() in aff.strip().lower()) or ("Adama University".strip().lower() in aff.strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
+                    
+                        for pub in author['papers']:
+                            
+                            title.append(pub["title"].strip().lower())
+                            
+                            one = {"name": author['name'],
+                                    "title": pub["title"],
+                                    "affiliation": aff,
+                                    "paper_id": pub["paperId"],
+                                    "year": pub["year"],
+                                    "citation_count": pub["citationCount"],
+                                    "abstract": pub["abstract"],
+                                    "is_open_access" : pub["isOpenAccess"],
+                                    "publication_date" : pub["publicationDate"],
+                                    "url": pub["url"],
+                                    "journal" : pub["journal"]['name'] if "name" in pub["journal"] else None,
+                                    "influential_citation_count": pub["influentialCitationCount"],
+                                    "publication_types" : ",".join([a for a in pub['publicationTypes']]) if pub['publicationTypes'] is not None else None,
+                                    "authors" : ",".join([a['name'] for a in pub['authors']]) if "authors" in pub else None,
+                                    }
+                            
+                            
+                            
+                            pubs.append(one)
 
         # Retrieve the author's data, fill-in, and print
         search_query = scholarly.search_author(name)
@@ -234,38 +235,39 @@ def getAuthorPublicationsBothByYear(request, name, year):
 
         res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount")
         res_json = res.json()
+        
+        if('data' in res_json):
+            for author in res_json['data']:
 
-        for author in res_json['data']:
+                for aff in author['affiliations']:
+                    if(("Adama Science and Technology University".strip().lower() in aff.strip().lower()) or ("Adama Science and Technology".strip().lower() in aff.strip().lower()) or ("Adama University".strip().lower() in aff.strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
+                    
 
-            for aff in author['affiliations']:
-                if(("Adama Science and Technology University".strip().lower() in aff.strip().lower()) or ("Adama Science and Technology".strip().lower() in aff.strip().lower()) or ("Adama University".strip().lower() in aff.strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
-                
-
-                    for pub in author['papers']:
-                        
-                        if(pub["year"] == year):
-
-                            title.append(pub["title"].strip().lower())
-                             
-                            one = {"name": author['name'],
-                                    "title": pub["title"],
-                                    "affiliation": aff,
-                                    "paper_id": pub["paperId"],
-                                    "year": pub["year"],
-                                    "citation_count": pub["citationCount"],
-                                    "abstract": pub["abstract"],
-                                    "is_open_access" : pub["isOpenAccess"],
-                                    "publication_date" : pub["publicationDate"],
-                                    "url": pub["url"],
-                                    "journal" : pub["journal"]['name'] if "name" in pub["journal"] else None,
-                                    "influential_citation_count": pub["influentialCitationCount"],
-                                    "publication_types" : ",".join([a for a in pub['publicationTypes']]) if pub['publicationTypes'] is not None else None,
-                                    "authors" : ",".join([a['name'] for a in pub['authors']]) if "authors" in pub else None,
-                                    }
+                        for pub in author['papers']:
                             
-                            
-                            
-                            pubs.append(one)
+                            if(pub["year"] == year):
+
+                                title.append(pub["title"].strip().lower())
+                                
+                                one = {"name": author['name'],
+                                        "title": pub["title"],
+                                        "affiliation": aff,
+                                        "paper_id": pub["paperId"],
+                                        "year": pub["year"],
+                                        "citation_count": pub["citationCount"],
+                                        "abstract": pub["abstract"],
+                                        "is_open_access" : pub["isOpenAccess"],
+                                        "publication_date" : pub["publicationDate"],
+                                        "url": pub["url"],
+                                        "journal" : pub["journal"]['name'] if "name" in pub["journal"] else None,
+                                        "influential_citation_count": pub["influentialCitationCount"],
+                                        "publication_types" : ",".join([a for a in pub['publicationTypes']]) if pub['publicationTypes'] is not None else None,
+                                        "authors" : ",".join([a['name'] for a in pub['authors']]) if "authors" in pub else None,
+                                        }
+                                
+                                
+                                
+                                pubs.append(one)
 
 
         # Retrieve the author's data, fill-in, and print
