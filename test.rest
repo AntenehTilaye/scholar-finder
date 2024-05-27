@@ -1,0 +1,14 @@
+
+
+GET http://127.0.0.1:8000/ppms/author/publications/Andinet Kebede
+
+###
+
+GET http://127.0.0.1:8000/ppms/author/publications/Andinet Kebede/2023
+
+###
+GET http://127.0.0.1:8000/ppms/author/publications-sematic/Andinet Kebede
+
+
+
+GET http://127.0.0.1:8000/ppms/author/publications-sematic/Andinet Kebede
