@@ -76,7 +76,11 @@ def getAuthorPublicationsByYear(request, name, year):
 def getAuthorPublicationsSemantic(request, name):
     if request.method == "GET":
 
-        res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount")
+        headers = {
+            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+        }
+
+        res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount",headers=headers)
         res_json = res.json()
         pubs = []
 
@@ -116,8 +120,10 @@ def getAuthorPublicationsSemantic(request, name):
 @api_view(["GET"])
 def getAuthorPublicationsSemanticByYear(request, name, year):
     if request.method == "GET":
-
-        res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount")
+        headers = {
+            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+        }
+        res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount",headers=headers)
         res_json = res.json()
         pubs = []
 
@@ -161,8 +167,10 @@ def getAuthorPublicationsBoth(request, name):
 
         pubs = []
         title = []
-
-        res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount")
+        headers = {
+            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+        }
+        res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount",headers=headers)
         res_json = res.json()
 
     
@@ -232,8 +240,11 @@ def getAuthorPublicationsBothByYear(request, name, year):
 
         pubs = []
         title = []
+        headers = {
+            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+        }
 
-        res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount")
+        res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount",headers=headers)
         res_json = res.json()
         
         if('data' in res_json):
