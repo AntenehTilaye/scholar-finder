@@ -235,7 +235,7 @@ def getAuthorPublicationsBoth(request, name):
 
             pubSer = PublicationSerializer(pubs, many=True)
             return Response(pubSer.data, status=status.HTTP_200_OK)
-            
+
         except StopIteration:
             
             pubSer = PublicationSerializer(pubs, many=True)
@@ -292,32 +292,38 @@ def getAuthorPublicationsBothByYear(request, name, year):
 
         # Retrieve the author's data, fill-in, and print
         search_query = scholarly.search_author(name)
-        author = scholarly.fill(next(search_query))
+        try:
+            author = scholarly.fill(next(search_query))
 
 
-        if(("Adama Science and Technology University".strip().lower() in author['affiliation'].strip().lower()) or ("Adama Science and Technology".strip().lower() in author['affiliation'].strip().lower()) or ("Adama University".strip().lower() in author['affiliation'].strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
-            for pub in author['publications']:
-                
-                if("pub_year" in pub["bib"].keys()):
+            if(("Adama Science and Technology University".strip().lower() in author['affiliation'].strip().lower()) or ("Adama Science and Technology".strip().lower() in author['affiliation'].strip().lower()) or ("Adama University".strip().lower() in author['affiliation'].strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
+                for pub in author['publications']:
                     
-                    if(pub["bib"]["pub_year"] == str(year)):
+                    if("pub_year" in pub["bib"].keys()):
+                        
+                        if(pub["bib"]["pub_year"] == str(year)):
 
-                        
-                        if(pub["bib"]["title"].strip().lower() in title): 
-                        
-                            one = {"name": author['name'],
-                                    "title": pub["bib"]["title"],
-                                    "affiliation": author['affiliation'],
-                                    "paper_id": pub["author_pub_id"],
-                                    "year": pub["bib"]["pub_year"],
-                                    "journal": pub["bib"]["citation"],
-                                    "citation_count": pub["num_citations"],
-                                    "is_open_access" : author["public_access"],
-                                    "authors": author['name'],
-                                    }
-                        
-                            pubs.append(one)
-        
+                            
+                            if(pub["bib"]["title"].strip().lower() in title): 
+                            
+                                one = {"name": author['name'],
+                                        "title": pub["bib"]["title"],
+                                        "affiliation": author['affiliation'],
+                                        "paper_id": pub["author_pub_id"],
+                                        "year": pub["bib"]["pub_year"],
+                                        "journal": pub["bib"]["citation"],
+                                        "citation_count": pub["num_citations"],
+                                        "is_open_access" : author["public_access"],
+                                        "authors": author['name'],
+                                        }
+                            
+                                pubs.append(one)
+            
 
-        pubSer = PublicationSerializer(pubs, many=True)
-        return Response(pubSer.data, status=status.HTTP_200_OK)
+            pubSer = PublicationSerializer(pubs, many=True)
+            return Response(pubSer.data, status=status.HTTP_200_OK)
+            
+        except StopIteration:
+            
+            pubSer = PublicationSerializer(pubs, many=True)
+            return Response(pubSer.data, status=status.HTTP_200_OK)
