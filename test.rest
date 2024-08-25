@@ -9,6 +9,47 @@ GET http://127.0.0.1:8000/ppms/author/publications/Andinet Kebede/2023
 ###
 GET http://127.0.0.1:8000/ppms/author/publications-sematic/Andinet Kebede
 
-
+###
 
 GET http://127.0.0.1:8000/ppms/author/publications-sematic/Andinet Kebede
+
+###
+
+POST http://10.240.72.111:8080/ppms/author/publications-multi/
+Content-Type: application/json
+
+{
+    "names" : [
+                {
+                    "name" : "Anteneh Tilaye",
+                    "employee_id" : "23132"
+                }, {
+                    "name" : "Ketema Adere",
+                    "employee_id" : "23132"
+                }, {
+                    "name" : "Yared Daba",
+                    "employee_id" : "23132"
+                }
+            ]
+}
+
+###
+
+POST http://10.240.72.111:8080/ppms/author/publications-multi-year/
+Content-Type: application/json
+
+{
+    "names_and_years" : [
+                {
+                    "name" : "Anteneh Tilaye",
+                    "employee_id" : "23132"
+                }, {
+                    "name" : "Ketema Adere",
+                    "employee_id" : "23132"
+                }, {
+                    "name" : "Yared Daba",
+                    "employee_id" : "23132"
+                }
+            ],
+    "year": 2020
+}

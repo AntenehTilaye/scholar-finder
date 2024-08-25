@@ -11,5 +11,8 @@ urlpatterns = [
     path("author/publications/<str:name>",views.getAuthorPublicationsBoth, name="publication-of-author"),
     path("author/publications/<str:name>/<int:year>",views.getAuthorPublicationsBothByYear, name="publication-of-author"),
 
+    path("author/publications-multi/",views.getAuthorPublicationsBothMultiAuthor, name="publication-of-author"),
+    path("author/publications-multi-year/",views.getAuthorPublicationsBothByYearMultiAuthor, name="publication-of-author"),
+
     
 ]

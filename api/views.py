@@ -4,10 +4,10 @@ from rest_framework import status
 from .serializers import PublicationSerializer
 from scholarly import scholarly
 import requests
-from scholarly import ProxyGenerator
-pg = ProxyGenerator()
-pg.FreeProxies()
-scholarly.use_proxy(pg)
+# from scholarly import ProxyGenerator
+# pg = ProxyGenerator()
+# pg.FreeProxies()
+# scholarly.use_proxy(pg)
 
 
 
@@ -33,7 +33,7 @@ def getAuthorPublications(request, name):
                             "year": pub["bib"]["pub_year"],
                             "journal": pub["bib"]["citation"],
                             "citation_count": pub["num_citations"],
-                            "is_open_access" : author["public_access"],
+                            "is_open_access" : author["public_access"]['available'] if 'available' in author['public_access'] else None,
                             "authors": author['name'],
                             }
                     
@@ -65,7 +65,7 @@ def getAuthorPublicationsByYear(request, name, year):
                                 "year": pub["bib"]["pub_year"],
                                 "journal": pub["bib"]["citation"],
                                 "citation_count": pub["num_citations"],
-                                "is_open_access" : author["public_access"],
+                                "is_open_access" : author["public_access"]['available'] if 'available' in author['public_access'] else None,
                                 "authors": author['name'],
                                 }
                     
@@ -227,8 +227,9 @@ def getAuthorPublicationsBoth(request, name):
                                     "year": pub["bib"]["pub_year"],
                                     "journal": pub["bib"]["citation"],
                                     "citation_count": pub["num_citations"],
-                                    "is_open_access" : author["public_access"],
+                                    "is_open_access" : author["public_access"]['available'] if 'available' in author['public_access'] else None,
                                     "authors": author['name'],
+                                    "publication_types" : "JournalArticle"
                                     }
                             
                             pubs.append(one)
@@ -313,8 +314,9 @@ def getAuthorPublicationsBothByYear(request, name, year):
                                         "year": pub["bib"]["pub_year"],
                                         "journal": pub["bib"]["citation"],
                                         "citation_count": pub["num_citations"],
-                                        "is_open_access" : author["public_access"],
+                                        "is_open_access" : author["public_access"]['available'] if 'available' in author['public_access'] else None,
                                         "authors": author['name'],
+                                        "publication_types" : "JournalArticle"
                                         }
                             
                                 pubs.append(one)
@@ -322,8 +324,146 @@ def getAuthorPublicationsBothByYear(request, name, year):
 
             pubSer = PublicationSerializer(pubs, many=True)
             return Response(pubSer.data, status=status.HTTP_200_OK)
-            
+
         except StopIteration:
             
             pubSer = PublicationSerializer(pubs, many=True)
             return Response(pubSer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def getAuthorPublicationsBothMultiAuthor(request):
+    if request.method == "POST":
+        data = request.data.get('names', [])
+        print(data)
+        pubs = []
+        title = []
+        headers = {
+            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+        }
+        for name in data:
+            print(name['name'])
+            res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name['name']+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount", headers=headers)
+            res_json = res.json()
+
+            if('data' in res_json):
+                for author in res_json['data']:
+                    for aff in author['affiliations']:
+                        if(("Adama Science and Technology University".strip().lower() in aff.strip().lower()) or ("Adama Science and Technology".strip().lower() in aff.strip().lower()) or ("Adama University".strip().lower() in aff.strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
+                            for pub in author['papers']:
+                                title.append(pub["title"].strip().lower())
+
+                                one = {"name": author['name'],
+                                       "employee_id": name['employee_id'],
+                                        "title": pub["title"],
+                                        "affiliation": aff,
+                                        "paper_id": pub["paperId"],
+                                        "year": pub["year"],
+                                        "citation_count": pub["citationCount"],
+                                        "abstract": pub["abstract"],
+                                        "is_open_access" : pub["isOpenAccess"],
+                                        "publication_date" : pub["publicationDate"],
+                                        "url": pub["url"],
+                                        "journal" : pub["journal"]['name'] if "name" in pub["journal"] else None,
+                                        "influential_citation_count": pub["influentialCitationCount"],
+                                        "publication_types" : ",".join([a for a in pub['publicationTypes']]) if pub['publicationTypes'] is not None else None,
+                                        "authors" : ",".join([a['name'] for a in pub['authors']]) if "authors" in pub else None,
+                                        }
+                                pubs.append(one)
+
+            # Retrieve the author's data, fill-in, and print
+            search_query = scholarly.search_author(name['name'])
+            try:
+                author = scholarly.fill(next(search_query))
+                if(("Adama Science and Technology University".strip().lower() in author['affiliation'].strip().lower()) or ("Adama Science and Technology".strip().lower() in author['affiliation'].strip().lower()) or ("Adama University".strip().lower() in author['affiliation'].strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
+                    for pub in author['publications']:
+                        if("pub_year" in pub["bib"].keys()):
+                            if not (pub["bib"]["title"].strip().lower() in title):
+                                one = {"name": author['name'],
+                                       "employee_id": name['employee_id'],
+                                        "title": pub["bib"]["title"],
+                                        "affiliation": author['affiliation'],
+                                        "paper_id": pub["author_pub_id"],
+                                        "year": pub["bib"]["pub_year"],
+                                        "journal": pub["bib"]["citation"],
+                                        "citation_count": pub["num_citations"],
+                                        "is_open_access" : author["public_access"]['available'] if 'available' in author['public_access'] else None,
+                                        "authors": author['name'],
+                                        "publication_types" : "JournalArticle"
+                                        }
+                                pubs.append(one)
+            except StopIteration:
+                pass
+
+        pubSer = PublicationSerializer(pubs, many=True)
+        return Response(pubSer.data, status=status.HTTP_200_OK)
+
+
+
+@api_view(["POST"])
+def getAuthorPublicationsBothByYearMultiAuthor(request):
+    if request.method == "POST":
+        data = request.data.get('names_and_years', [])
+        pubs = []
+        title = []
+        headers = {
+            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+        }
+        for item in data:
+            name = item.get('name')
+            year = item.get('year')
+            res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount", headers=headers)
+            res_json = res.json()
+
+            if('data' in res_json):
+                for author in res_json['data']:
+                    for aff in author['affiliations']:
+                        if(("Adama Science and Technology University".strip().lower() in aff.strip().lower()) or ("Adama Science and Technology".strip().lower() in aff.strip().lower()) or ("Adama University".strip().lower() in aff.strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
+                            for pub in author['papers']:
+                                if(pub["year"] == year):
+                                    title.append(pub["title"].strip().lower())
+                                    one = {"name": author['name'],
+                                       "employee_id": name['employee_id'],
+                                            "title": pub["title"],
+                                            "affiliation": aff,
+                                            "paper_id": pub["paperId"],
+                                            "year": pub["year"],
+                                            "citation_count": pub["citationCount"],
+                                            "abstract": pub["abstract"],
+                                            "is_open_access" : pub["isOpenAccess"],
+                                            "publication_date" : pub["publicationDate"],
+                                            "url": pub["url"],
+                                            "journal" : pub["journal"]['name'] if "name" in pub["journal"] else None,
+                                            "influential_citation_count": pub["influentialCitationCount"],
+                                            "publication_types" : ",".join([a for a in pub['publicationTypes']]) if pub['publicationTypes'] is not None else None,
+                                            "authors" : ",".join([a['name'] for a in pub['authors']]) if "authors" in pub else None,
+                                            }
+                                    pubs.append(one)
+
+            # Retrieve the author's data, fill-in, and print
+            search_query = scholarly.search_author(name)
+            try:
+                author = scholarly.fill(next(search_query))
+                if(("Adama Science and Technology University".strip().lower() in author['affiliation'].strip().lower()) or ("Adama Science and Technology".strip().lower() in author['affiliation'].strip().lower()) or ("Adama University".strip().lower() in author['affiliation'].strip().lower()) or ("@astu.edu.et".strip().lower() in author['email_domain'].strip().lower())):
+                    for pub in author['publications']:
+                        if("pub_year" in pub["bib"].keys()):
+                            if(pub["bib"]["pub_year"] == str(year)):
+                                if(pub["bib"]["title"].strip().lower() in title): 
+                                    one = {"name": author['name'],
+                                            "employee_id": name['employee_id'],
+                                            "title": pub["bib"]["title"],
+                                            "affiliation": author['affiliation'],
+                                            "paper_id": pub["author_pub_id"],
+                                            "year": pub["bib"]["pub_year"],
+                                            "journal": pub["bib"]["citation"],
+                                            "citation_count": pub["num_citations"],
+                                            "is_open_access" : author["public_access"]['available'] if 'available' in author['public_access'] else None,
+                                            "authors": author['name'],
+                                            "publication_types" : "JournalArticle"
+                                            }
+                                    pubs.append(one)
+            except StopIteration:
+                pass
+
+        pubSer = PublicationSerializer(pubs, many=True)
+        return Response(pubSer.data, status=status.HTTP_200_OK)
