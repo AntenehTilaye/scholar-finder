@@ -80,7 +80,7 @@ def getAuthorPublicationsSemantic(request, name):
     if request.method == "GET":
 
         headers = {
-            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+            'x-api-key': 'You API KEY'
         }
 
         res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount",headers=headers)
@@ -124,7 +124,7 @@ def getAuthorPublicationsSemantic(request, name):
 def getAuthorPublicationsSemanticByYear(request, name, year):
     if request.method == "GET":
         headers = {
-            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+            'x-api-key': 'You API KEY'
         }
         res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount",headers=headers)
         res_json = res.json()
@@ -171,7 +171,7 @@ def getAuthorPublicationsBoth(request, name):
         pubs = []
         title = []
         headers = {
-            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+            'x-api-key': 'You API KEY'
         }
         res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount",headers=headers)
         res_json = res.json()
@@ -251,7 +251,7 @@ def getAuthorPublicationsBothByYear(request, name, year):
         pubs = []
         title = []
         headers = {
-            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+            'x-api-key': 'You API KEY'
         }
 
         res = requests.get("https://api.semanticscholar.org/graph/v1/author/search?query="+name+"&fields=name,affiliations,url,papers.title,papers.year,papers.publicationTypes,papers.journal,papers.paperId,papers.authors,papers.abstract,papers.citationCount,papers.isOpenAccess,papers.openAccessPdf,papers.publicationDate,papers.url,papers.influentialCitationCount",headers=headers)
@@ -339,7 +339,7 @@ def getAuthorPublicationsBothMultiAuthor(request):
         pubs = []
         title = []
         headers = {
-            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+            'x-api-key': 'You API KEY'
         }
         for name in data:
             print(name['name'])
@@ -407,7 +407,7 @@ def getAuthorPublicationsBothByYearMultiAuthor(request):
         pubs = []
         title = []
         headers = {
-            'x-api-key': '3FU8Nj7vAh241fadF6HlA6kVFfqQzKl115z6tQUO'
+            'x-api-key': 'You API KEY'
         }
         for item in data:
             name = item.get('name')
